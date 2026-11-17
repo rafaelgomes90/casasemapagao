@@ -20,6 +20,7 @@ systemctl disable --now nginx >/dev/null 2>&1 || true
 
 echo "==> Baixando/atualizando o site em $WWW"
 command -v git >/dev/null || { apt-get update -qq; DEBIAN_FRONTEND=noninteractive apt-get install -y -qq git >/dev/null; }
+git config --global --get-all safe.directory 2>/dev/null | grep -qx "$WWW" || git config --global --add safe.directory "$WWW"
 if [ -d "$WWW/.git" ]; then git -C "$WWW" pull -q; else rm -rf "$WWW"; git clone -q "$REPO" "$WWW"; fi
 chmod -R a+rX "$WWW"
 echo "*/5 * * * * root git -C $WWW pull -q >/dev/null 2>&1 && chmod -R a+rX $WWW" > /etc/cron.d/casasemapagao

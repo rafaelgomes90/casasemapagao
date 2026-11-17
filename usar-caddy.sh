@@ -22,6 +22,7 @@ systemctl disable --now nginx >/dev/null 2>&1 || true
 
 echo "==> Baixando/atualizando o site"
 command -v git >/dev/null || { apt-get update -qq; DEBIAN_FRONTEND=noninteractive apt-get install -y -qq git >/dev/null; }
+git config --global --get-all safe.directory 2>/dev/null | grep -qx "$DIR" || git config --global --add safe.directory "$DIR"
 if [ -d "$DIR/.git" ]; then git -C "$DIR" pull -q; else git clone -q "$REPO" "$DIR"; fi
 chmod -R a+rX "$DIR"
 
