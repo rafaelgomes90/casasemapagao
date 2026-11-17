@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://energia.ofertadorafa.com.br/sitemap.xml
