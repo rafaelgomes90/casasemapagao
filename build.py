@@ -7,7 +7,7 @@ sitemap.xml e robots.txt.  Rode:  python3 build.py
 import json, html, os
 
 BASE = "https://energia.ofertadorafa.com.br"
-PIXEL = "1607791717209035"
+PIXEL = "2156050925299390"
 ROOT = os.path.dirname(os.path.abspath(__file__))
 P = json.load(open(os.path.join(ROOT, "produtos.json"), encoding="utf-8"))
 BY = {p["id"]: p for p in P}
