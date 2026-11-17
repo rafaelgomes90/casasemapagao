@@ -6,7 +6,7 @@
   function L(p, cls, inner, origem){ return '<a class="'+(cls||'')+'" href="'+esc(p.link)+'" target="_blank" rel="noopener sponsored" data-ml="'+p.id+'" data-origem="'+(origem||'')+'">'+inner+'</a>'; }
   function img(p){ return '<img src="'+esc(p.imagem)+'" alt="'+esc(p.nome)+'" loading="lazy" decoding="async">'; }
   function specs(p){ var s=[]; if(p.capacidadeWh) s.push(brl(p.capacidadeWh)+' Wh'); if(p.potenciaW) s.push(brl(p.potenciaW)+' W'); return s.join(' · '); }
-  function botao(p, origem, sec){ return L(p, 'ml'+(sec?' sec2':''), (sec?'Ver no Mercado Livre':'Ver preço de hoje no Mercado Livre')+' '+ICON_EXT, origem); }
+  function botao(p, origem, sec){ return L(p, 'ml'+(sec?' sec2':''), (sec?'Comprar agora':'Comprar agora no Mercado Livre')+' '+ICON_EXT, origem); }
 
   var AP = [
     {id:'roteador',nome:'Roteador Wi‑Fi + modem',w:20,pico:20},

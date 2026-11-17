@@ -106,7 +106,7 @@ def card(p, origem="vitrine"):
     <div><h3><a href="/{p['id']}/">{e(p['nome'])}</a></h3><p class="spec">{specs(p)} · {e(p['voltagem'])}</p></div>
     <ul class="checks">{pts}</ul>
     <p class="preco">por volta de <b>R$ {brl(p['precoAprox'])}</b></p>
-    {ml(p, 'Ver preço de hoje no Mercado Livre ' + ICON_EXT, "ml", origem + "-botao")}
+    {ml(p, 'Comprar agora no Mercado Livre ' + ICON_EXT, "ml", origem + "-botao")}
     <a class="det" href="/{p['id']}/">Ver detalhes e quanto tempo segura →</a>
   </div>
 </article>"""
@@ -246,7 +246,7 @@ for p in P:
       <div class="preco-box" data-flut-alvo>
         <div class="valor">R$ {brl(p['precoAprox'])}</div>
         <small>preço de referência — o valor de hoje (e cupons) aparece no Mercado Livre</small>
-        {ml(p, 'Ver preço de hoje no Mercado Livre ' + ICON_EXT, "ml", "produto-botao")}
+        {ml(p, 'Comprar agora no Mercado Livre ' + ICON_EXT, "ml", "produto-botao")}
         <ul class="garantias"><li>{ICON_SHIELD}Compra Garantida: você recebe o produto ou o dinheiro de volta</li><li>{ICON_CARD}Parcelamento e frete calculados no Mercado Livre</li></ul>
       </div>
     </div>
@@ -259,7 +259,7 @@ for p in P:
   <p style="text-align:center;margin-top:22px"><a href="/#produtos" style="font-weight:600">Ver todos os produtos →</a></p>
 </div></section>
 {footer()}
-<div class="flut" id="flut" aria-hidden="true"><div class="fp">por volta de<b>R$ {brl(p['precoAprox'])}</b></div>{ml(p, 'Ver no Mercado Livre ' + ICON_EXT, "ml", "produto-barra")}</div>
+<div class="flut" id="flut" aria-hidden="true"><div class="fp">por volta de<b>R$ {brl(p['precoAprox'])}</b></div>{ml(p, 'Comprar agora ' + ICON_EXT, "ml", "produto-barra")}</div>
 """ + scripts()
     os.makedirs(os.path.join(ROOT, p["id"]), exist_ok=True)
     open(os.path.join(ROOT, p["id"], "index.html"), "w", encoding="utf-8").write(page)
