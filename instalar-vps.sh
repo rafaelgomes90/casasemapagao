@@ -10,6 +10,7 @@ REPO="https://github.com/rafaelgomes90/casasemapagao.git"
 DIR="/var/www/casasemapagao"
 DOMINIO="${DOMINIO:-}"
 EMAIL="${EMAIL:-}"
+WWW="${WWW:-0}"   # WWW=1 também atende www.DOMINIO
 CONF="/etc/nginx/sites-available/casasemapagao"
 
 echo "==> Instalando nginx e git"
@@ -22,7 +23,7 @@ chown -R www-data:www-data "$DIR"
 
 if [ -n "$DOMINIO" ]; then
   LISTEN="listen 80; listen [::]:80;"
-  NAME="server_name $DOMINIO www.$DOMINIO;"
+  NAME="server_name $DOMINIO$([ "$WWW" = 1 ] && echo " www.$DOMINIO");"
 else
   LISTEN="listen 8080; listen [::]:8080;"
   NAME="server_name _;"
@@ -61,7 +62,7 @@ if [ -n "$DOMINIO" ]; then
   echo "==> Certificado HTTPS (Let's Encrypt)"
   DEBIAN_FRONTEND=noninteractive apt-get install -y -qq certbot python3-certbot-nginx >/dev/null
   if [ -n "$EMAIL" ]; then EM="-m $EMAIL"; else EM="--register-unsafely-without-email"; fi
-  certbot --nginx -n --agree-tos $EM --redirect -d "$DOMINIO" -d "www.$DOMINIO" || \
+  certbot --nginx -n --agree-tos $EM --redirect -d "$DOMINIO" $([ "$WWW" = 1 ] && echo "-d www.$DOMINIO") || \
     echo "!! O HTTPS falhou. Confira se o DNS de $DOMINIO aponta pra este IP e rode o comando de novo."
   echo "Pronto: https://$DOMINIO"
 else
