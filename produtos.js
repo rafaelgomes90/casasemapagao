@@ -253,5 +253,145 @@ window.PRODUTOS = [
   ],
   "imagem": "https://http2.mlstatic.com/D_NQ_NP_899039-MLA105659575043_012026-O.webp",
   "link": "https://meli.la/27T49jA"
+ },
+ {
+  "id": "bluetti-ac50p",
+  "nome": "Bluetti AC50P",
+  "categoria": "estacao",
+  "capacidadeWh": 504,
+  "potenciaW": 700,
+  "voltagem": "127V",
+  "selo": "Custo-benefício",
+  "precoAprox": 2465,
+  "resumo": "Meio termo entre as pequenas e as grandes: 504 Wh com bateria LiFePO4, segura Wi‑Fi, TV e notebook por horas e liga ventilador e geladeira pequena.",
+  "pontos": [
+   "Bateria LiFePO4 de longa vida",
+   "Liga sozinha quando a luz cai",
+   "Carrega na tomada, no carro ou no painel solar"
+  ],
+  "imagem": "https://http2.mlstatic.com/D_Q_NP_2X_647642-MLA99925307387_112025-E.webp",
+  "link": "https://meli.la/1hjdeSg",
+  "etiqueta": "ofertadorafa"
+ },
+ {
+  "id": "powerbank-60k-icecoorel",
+  "nome": "Power Bank 60.000 mAh 100 W (Ice Coorel)",
+  "categoria": "portatil",
+  "spec": "60.000 mAh · 100 W",
+  "voltagem": "USB / USB‑C",
+  "selo": "Mais vendido",
+  "precoAprox": 379,
+  "resumo": "Bateria portátil parruda: carrega celular várias vezes, notebook com USB‑C e até a Starlink Mini durante a queda de luz.",
+  "pontos": [
+   "100 W: carrega notebook USB‑C",
+   "Dá conta da Starlink Mini",
+   "Nota 4,9 com mais de 5 mil vendidos"
+  ],
+  "imagem": "https://http2.mlstatic.com/D_Q_NP_2X_673301-MLA103377891620_012026-E.webp",
+  "link": "https://meli.la/2126uRQ",
+  "etiqueta": "ofertadorafa"
+ },
+ {
+  "id": "powerbank-60k-chrome",
+  "nome": "Power Bank 60.000 mAh 100 W (Chrome Technology)",
+  "categoria": "portatil",
+  "spec": "60.000 mAh · 100 W",
+  "voltagem": "USB / USB‑C",
+  "precoAprox": 315,
+  "resumo": "A opção mais em conta de 60 mil mAh com 100 W: celulares e notebook carregados mesmo com a casa sem luz.",
+  "pontos": [
+   "100 W de saída USB‑C",
+   "Proteção contra sobrecarga e curto",
+   "Mais de 5 mil vendidos"
+  ],
+  "imagem": "https://http2.mlstatic.com/D_Q_NP_2X_912964-MLA111236248710_052026-E.webp",
+  "link": "https://meli.la/1twzY42",
+  "etiqueta": "ofertadorafa"
+ },
+ {
+  "id": "powerbank-60k-turbo",
+  "nome": "Power Bank 60.000 mAh 100 W Turbo",
+  "categoria": "portatil",
+  "spec": "60.000 mAh · 100 W",
+  "voltagem": "USB / USB‑C",
+  "precoAprox": 395,
+  "resumo": "Mais uma de 60 mil mAh e 100 W, bem avaliada, pra deixar celular, tablet e notebook com carga durante o apagão.",
+  "pontos": [
+   "Carga turbo de 100 W",
+   "Celular, tablet e notebook",
+   "Nota 4,9"
+  ],
+  "imagem": "https://http2.mlstatic.com/D_Q_NP_2X_921062-MLB119879630480_112026-E--power-bank-60000mah-carregador-portatil-100w-starlink-turbo.webp",
+  "link": "https://meli.la/2DYR5yq",
+  "etiqueta": "ofertadorafa"
+ },
+ {
+  "id": "ventilador-recarregavel",
+  "nome": "Ventilador Recarregável com Luz LED",
+  "categoria": "portatil",
+  "spec": "Ventilador + luz",
+  "voltagem": "Recarregável",
+  "precoAprox": 128,
+  "resumo": "Sem luz e no calor? Ventilador a bateria com luz de LED: ventila o quarto e ilumina ao mesmo tempo, sem tomada.",
+  "pontos": [
+   "Ventila e ilumina sem tomada",
+   "Recarrega no USB ou no power bank",
+   "Mais de 5 mil vendidos"
+  ],
+  "imagem": "https://http2.mlstatic.com/D_Q_NP_2X_602294-MLA106764581788_022026-E.webp",
+  "link": "https://meli.la/2keZik6",
+  "etiqueta": "ofertadorafa"
+ },
+ {
+  "id": "lampiao-led",
+  "nome": "Lampião LED Recarregável",
+  "categoria": "portatil",
+  "spec": "Luz portátil",
+  "voltagem": "Recarregável",
+  "precoAprox": 39,
+  "resumo": "Luz forte e barata pra deixar na gaveta: pendura, apoia na mesa e ilumina o cômodo inteiro quando a energia cai.",
+  "pontos": [
+   "Ilumina o cômodo inteiro",
+   "Recarregável no USB",
+   "Nota 4,8 com mais de 5 mil vendidos"
+  ],
+  "imagem": "https://http2.mlstatic.com/D_Q_NP_2X_853721-MLB98382716384_112025-E--lanterna-trabalho-portatil-lampiao-led-recarregavel-camping.webp",
+  "link": "https://meli.la/2wt4hBv",
+  "etiqueta": "ofertadorafa"
+ },
+ {
+  "id": "mini-nobreak-marsriva",
+  "nome": "Mini Nobreak para Roteador 36 Wh (Marsriva KP3)",
+  "categoria": "protecao",
+  "spec": "36 Wh · 18 W",
+  "voltagem": "Bivolt",
+  "selo": "Internet sem cair",
+  "precoAprox": 198,
+  "resumo": "Fica entre a tomada e o roteador: quando a luz cai, a internet continua por horas. Ideal pra quem trabalha em casa.",
+  "pontos": [
+   "Internet continua na queda",
+   "Serve pra roteador, ONU e câmera",
+   "Bivolt"
+  ],
+  "imagem": "https://http2.mlstatic.com/D_Q_NP_2X_914027-MLA99990989149_112025-E.webp",
+  "link": "https://meli.la/17BHE7V",
+  "etiqueta": "ofertadorafa"
+ },
+ {
+  "id": "mini-nobreak-kp588",
+  "nome": "Mini Nobreak para Roteador 35 W (Knup KP-588)",
+  "categoria": "protecao",
+  "spec": "35 W · USB‑C e PoE",
+  "voltagem": "Bivolt",
+  "precoAprox": 125,
+  "resumo": "O mini nobreak mais vendido: mantém o Wi‑Fi ligado na queda de energia, com saídas pra roteador, USB‑C e PoE.",
+  "pontos": [
+   "Wi‑Fi não cai com a luz",
+   "Saídas DC, USB‑C e PoE",
+   "Mais de 5 mil vendidos"
+  ],
+  "imagem": "https://http2.mlstatic.com/D_Q_NP_2X_912185-MLA99460162062_112025-E.webp",
+  "link": "https://meli.la/1gHVAGr",
+  "etiqueta": "ofertadorafa"
  }
 ];

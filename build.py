@@ -12,6 +12,7 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 P = json.load(open(os.path.join(ROOT, "produtos.json"), encoding="utf-8"))
 BY = {p["id"]: p for p in P}
 CATS = [("estacao", "Estações de energia", "Silenciosas, sem gasolina, funcionam dentro de casa e ligam sozinhas na queda."),
+        ("portatil", "Power banks e portáteis", "Celular, notebook e Starlink com carga, ventilador e luz funcionando sem tomada."),
         ("gerador", "Geradores a gasolina", "Mais potência por real, mas só do lado de fora de casa, com barulho e combustível."),
         ("protecao", "Proteção e itens de entrada", "Baratos e resolvem o susto: internet sem piscar, aparelho sem queimar, casa sem escuro.")]
 CATNOME = {c: n for c, n, _ in CATS}
@@ -45,6 +46,7 @@ LOGO_SVG = '<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height=
 
 
 def specs(p):
+    if p.get("spec"): return e(p["spec"])
     s = []
     if p.get("capacidadeWh"): s.append(f"{brl(p['capacidadeWh'])} Wh")
     if p.get("potenciaW"): s.append(f"{brl(p['potenciaW'])} W")
@@ -111,7 +113,7 @@ def footer():
 
 
 def scripts(extra=""):
-    return f'<script src="/produtos.js?v=2"></script>\n<script src="/assets/app.js?v=5"></script>\n{extra}</body>\n</html>\n'
+    return f'<script src="/produtos.js?v=3"></script>\n<script src="/assets/app.js?v=5"></script>\n{extra}</body>\n</html>\n'
 
 
 def card(p, origem="vitrine"):
@@ -124,7 +126,7 @@ def card(p, origem="vitrine"):
     <ul class="checks">{pts}</ul>
     <p class="preco">por volta de <b>R$ {brl(p['precoAprox'])}</b></p>
     {ml(p, 'Comprar agora no Mercado Livre ' + ICON_EXT, "ml", origem + "-botao")}
-    <a class="det" href="/{p['id']}/">Ver detalhes e quanto tempo segura →</a>
+    <a class="det" href="/{p['id']}/">{'Ver detalhes e quanto tempo segura →' if p['categoria'] == 'estacao' else 'Ver detalhes →'}</a>
   </div>
 </article>"""
 
@@ -228,9 +230,10 @@ def horas_txt(h):
 
 for p in P:
     pts = "".join(f"<li>{ICON_CHECK}<span>{e(t)}</span></li>" for t in p["pontos"])
-    chips_p = [f"Versão {e(p['voltagem'])}"]
+    chips_p = [f"Versão {e(p['voltagem'])}"] if p["categoria"] != "portatil" else [e(p['voltagem'])]
     if p.get("capacidadeWh"): chips_p.insert(0, f"{brl(p['capacidadeWh'])} Wh de bateria")
-    if p.get("potenciaW"): chips_p.insert(1 if p.get("capacidadeWh") else 0, f"{brl(p['potenciaW'])} W (pico {brl(p['picoW'])} W)")
+    if p.get("potenciaW"): chips_p.insert(1 if p.get("capacidadeWh") else 0, f"{brl(p['potenciaW'])} W" + (f" (pico {brl(p['picoW'])} W)" if p.get('picoW') else ""))
+    if p.get("spec") and not p.get("capacidadeWh"): chips_p.insert(0, e(p["spec"]))
     chips_html = "".join(f"<li>{c}</li>" for c in chips_p)
     extra_bloco = ""
     if p["categoria"] == "estacao":
@@ -238,7 +241,7 @@ for p in P:
         extra_bloco = f"""<section class="sec alt"><div class="wrap" style="max-width:760px">
   <div class="sec-title" style="margin-bottom:18px"><h2>Quanto tempo a {e(p['nome'])} segura?</h2><p>Estimativa com {brl(p['capacidadeWh'])} Wh e 85% de aproveitamento da bateria.</p></div>
   <div class="aut"><table>{linhas}</table></div>
-  <p class="nota" style="text-align:center">Liga aparelhos de até {brl(p['potenciaW'])} W ao mesmo tempo (pico de {brl(p['picoW'])} W na partida de motores, como o da geladeira).</p>
+  <p class="nota" style="text-align:center">Liga aparelhos de até {brl(p['potenciaW'])} W ao mesmo tempo{(f" (pico de {brl(p['picoW'])} W na partida de motores, como o da geladeira)") if p.get('picoW') else ""}.</p>
   <p style="text-align:center;margin-top:16px"><a class="btn btn-amber" href="/calculadora/">Calcular com os meus aparelhos</a></p>
 </div></section>"""
     elif p["categoria"] == "gerador":
