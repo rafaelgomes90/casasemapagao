@@ -33,7 +33,8 @@
   // Contador de visitantes (painel): visita, "estou online" a cada 20s e clique pro ML
   var HIT='/api/hit', sid;
   try{ sid=sessionStorage.getItem('csa_sid'); if(!sid){ sid=Math.random().toString(36).slice(2)+Date.now().toString(36); sessionStorage.setItem('csa_sid',sid); } }catch(e){ sid='x'+Math.random().toString(36).slice(2); }
-  function hit(t,prod){ try{
+  var EU=false; try{ EU=localStorage.getItem('csa_eu')==='1'; }catch(e){}
+  function hit(t,prod){ if(EU) return; try{
     var u={}; try{ u=JSON.parse(sessionStorage.getItem(KEY)||'{}'); }catch(e){}
     var body=JSON.stringify({t:t,sid:sid,p:location.pathname,prod:prod||'',src:u.utm_source||(document.referrer?new URL(document.referrer).hostname:''),ad:u.utm_content||''});
     if(navigator.sendBeacon) navigator.sendBeacon(HIT,new Blob([body],{type:'application/json'}));

@@ -1,7 +1,7 @@
 """Casa Sem Apagão — contador de visitantes (só biblioteca padrão do Python).
 Recebe os eventos do site em POST /api/hit e serve os dados do painel em GET /api/painel?k=CHAVE.
 Guarda só cidade/UF aproximada (pelo IP), aparelho, página, produto e anúncio de origem. O IP não é gravado."""
-import json, os, sqlite3, threading, time, urllib.request, hashlib, re
+import json, os, sys, sqlite3, threading, time, urllib.request, hashlib, re
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 PORT = int(os.environ.get('PORT', 8787))
@@ -17,7 +17,17 @@ con.execute('''CREATE TABLE IF NOT EXISTS ev(
   aparelho TEXT, origem TEXT, anuncio TEXT)''')
 con.execute('CREATE INDEX IF NOT EXISTS ev_ts ON ev(ts)')
 con.execute('CREATE TABLE IF NOT EXISTS sess(sid TEXT PRIMARY KEY, ultimo REAL, pagina TEXT, cidade TEXT, uf TEXT, aparelho TEXT, anuncio TEXT)')
+con.execute('CREATE TABLE IF NOT EXISTS ign(h TEXT PRIMARY KEY, ts REAL)')
 con.commit()
+IGN = {r[0] for r in con.execute('SELECT h FROM ign')}
+
+
+def iphash(ip):
+    return hashlib.sha256(('csa:' + ip).encode()).hexdigest()[:20]
+
+
+def ip_de(req):
+    return (req.headers.get('X-Forwarded-For') or req.client_address[0]).split(',')[0].strip()
 
 _geo = {}  # cache em memória: hash do IP -> (cidade, uf)
 
@@ -87,7 +97,9 @@ class H(BaseHTTPRequestHandler):
         sid = clip(d.get('sid'), 40)
         if not sid:
             return self._json(400, {})
-        ip = (self.headers.get('X-Forwarded-For') or self.client_address[0]).split(',')[0].strip()
+        ip = ip_de(self)
+        if iphash(ip) in IGN or d.get('eu'):
+            self.send_response(204); self.end_headers(); return
         now = time.time()
         with lock:
             row = con.execute('SELECT cidade, uf FROM sess WHERE sid=?', (sid,)).fetchone()
@@ -112,7 +124,10 @@ class H(BaseHTTPRequestHandler):
         if not KEY or k != KEY:
             return self._json(403, {'erro': 'chave inválida'})
         now, hoje = time.time(), inicio_do_dia()
+        h = iphash(ip_de(self))  # quem abre o painel (com a chave) deixa de ser contado nesse IP
         with lock:
+            if h not in IGN:
+                IGN.add(h); con.execute('INSERT OR IGNORE INTO ign VALUES(?,?)', (h, now)); con.commit()
             online = con.execute('SELECT sid, pagina, cidade, uf, aparelho, anuncio, ultimo FROM sess WHERE ultimo>? ORDER BY ultimo DESC',
                                  (now - ONLINE_S,)).fetchall()
             q = lambda sql, *a: con.execute(sql, a).fetchone()[0]
@@ -137,6 +152,20 @@ class H(BaseHTTPRequestHandler):
         })
 
 
+def recarrega_se_mudar():
+    # o código vem do git (pull a cada minuto): reinicia sozinho quando o server.py muda
+    f = os.path.abspath(__file__); m = os.path.getmtime(f)
+    while True:
+        time.sleep(30)
+        try:
+            if os.path.getmtime(f) != m:
+                print('server.py mudou, reiniciando', flush=True); os.execv(sys.executable, [sys.executable, '-u', f])
+        except Exception:
+            pass
+
+
 if __name__ == '__main__':
+    import sys
+    threading.Thread(target=recarrega_se_mudar, daemon=True).start()
     print(f'visitas na porta {PORT}', flush=True)
     ThreadingHTTPServer(('0.0.0.0', PORT), H).serve_forever()

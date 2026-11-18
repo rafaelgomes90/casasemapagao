@@ -41,6 +41,7 @@ function rows(id,list,fn,vazio){document.getElementById(id).innerHTML=list.lengt
 function load(){
  fetch('/api/painel?k='+encodeURIComponent(K),{cache:'no-store'}).then(function(r){if(r.status==403)throw 'Chave inválida: abra o link completo que te passei.';return r.json()}).then(function(d){
   document.getElementById('err').innerHTML='';
+  try{ localStorage.setItem('csa_eu','1'); }catch(e){}
   document.getElementById('upd').textContent='atualizado '+hora(d.agora)+' · atualiza a cada 5s';
   var h=d.hoje;
   document.getElementById('k-on').textContent=d.online.length;
