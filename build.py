@@ -94,7 +94,7 @@ def footer():
 
 
 def scripts(extra=""):
-    return f'<script src="/produtos.js?v=2"></script>\n<script src="/assets/app.js?v=2"></script>\n{extra}</body>\n</html>\n'
+    return f'<script src="/produtos.js?v=2"></script>\n<script src="/assets/app.js?v=3"></script>\n{extra}</body>\n</html>\n'
 
 
 def card(p, origem="vitrine"):

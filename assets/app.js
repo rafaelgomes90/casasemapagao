@@ -30,6 +30,20 @@
     CSA.track('ViewContent',{content_name:p.nome,content_ids:[p.id],content_type:'product',content_category:p.categoria,value:p.precoAprox,currency:'BRL'});
   }
 
+  // Contador de visitantes (painel): visita, "estou online" a cada 20s e clique pro ML
+  var HIT='/api/hit', sid;
+  try{ sid=sessionStorage.getItem('csa_sid'); if(!sid){ sid=Math.random().toString(36).slice(2)+Date.now().toString(36); sessionStorage.setItem('csa_sid',sid); } }catch(e){ sid='x'+Math.random().toString(36).slice(2); }
+  function hit(t,prod){ try{
+    var u={}; try{ u=JSON.parse(sessionStorage.getItem(KEY)||'{}'); }catch(e){}
+    var body=JSON.stringify({t:t,sid:sid,p:location.pathname,prod:prod||'',src:u.utm_source||(document.referrer?new URL(document.referrer).hostname:''),ad:u.utm_content||''});
+    if(navigator.sendBeacon) navigator.sendBeacon(HIT,new Blob([body],{type:'application/json'}));
+    else fetch(HIT,{method:'POST',body:body,headers:{'Content-Type':'application/json'},keepalive:true});
+  }catch(e){} }
+  hit('view');
+  setInterval(function(){ if(document.visibilityState==='visible') hit('ping'); },20000);
+  document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') hit('ping'); });
+  document.addEventListener('click',function(e){ var a=e.target.closest&&e.target.closest('a[data-ml]'); if(!a) return; var p=CSA.byId[a.getAttribute('data-ml')]; hit('click',p?p.nome:a.getAttribute('data-ml')); });
+
   // Barra fixa do celular: aparece depois que o primeiro CTA sai da tela
   var flut=document.getElementById('flut'), alvo=document.querySelector('[data-flut-alvo]');
   if(flut && alvo && 'IntersectionObserver' in window){
