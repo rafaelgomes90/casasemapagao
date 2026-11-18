@@ -76,8 +76,10 @@ docker rm -f achadinhos-visitas-1 >/dev/null 2>&1 || true
 $DC up -d --no-deps visitas caddy || desfazer
 sleep 3
 echo "==> Recarregando a configuração do Caddy (sem derrubar nada)"
-if ! $DC exec -T caddy caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile; then
-  echo "   reload falhou, reiniciando o Caddy"; $DC restart caddy
+if $DC exec -T caddy grep -q "visitas:8787" /etc/caddy/Caddyfile 2>/dev/null; then
+  $DC exec -T caddy caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile || $DC restart caddy
+else
+  echo "   o Caddy está com o arquivo antigo preso; reiniciando ele (uns 3 segundos)"; $DC restart caddy
 fi
 sleep 4
 
