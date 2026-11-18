@@ -29,7 +29,9 @@ cp "$CADDYFILE" "$CADDYFILE.bak-$TS"
 
 echo "==> Caddy: /api/* do site vai pro contador"
 if ! grep -q "reverse_proxy /api/\* visitas:8787" "$CADDYFILE"; then
-  sed -i "s#^\(\s*\)root \* /srv/casasemapagao#&\n\1reverse_proxy /api/* visitas:8787#" "$CADDYFILE"
+  # edita no lugar (mesmo arquivo), pra o container do Caddy enxergar a mudança
+  sed "s#^\(\s*\)root \* /srv/casasemapagao#&\n\1reverse_proxy /api/* visitas:8787#" "$CADDYFILE" > "$CADDYFILE.novo"
+  cat "$CADDYFILE.novo" > "$CADDYFILE"; rm -f "$CADDYFILE.novo"
 fi
 grep -q "reverse_proxy /api/\* visitas:8787" "$CADDYFILE" || { echo "!! Não consegui editar o Caddyfile"; exit 1; }
 
@@ -58,10 +60,10 @@ chown rafael:rafael "$CADDYFILE" "$OVERRIDE" 2>/dev/null || true
 
 desfazer() {
   echo "!! Algo deu errado — voltando a configuração anterior"
-  mv "$CADDYFILE.bak-$TS" "$CADDYFILE"
-  if [ -f "$OVERRIDE.bak-$TS" ]; then mv "$OVERRIDE.bak-$TS" "$OVERRIDE"; else rm -f "$OVERRIDE"; fi
-  $DC rm -sf visitas >/dev/null 2>&1 || true
-  $DC up -d --no-deps caddy
+  cat "$CADDYFILE.bak-$TS" > "$CADDYFILE"
+  if [ -f "$OVERRIDE.bak-$TS" ]; then cat "$OVERRIDE.bak-$TS" > "$OVERRIDE"; else rm -f "$OVERRIDE"; fi
+  docker rm -f achadinhos-visitas-1 >/dev/null 2>&1 || true
+  $DC exec -T caddy caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile >/dev/null 2>&1 || $DC restart caddy
   exit 1
 }
 
@@ -70,8 +72,14 @@ DOM=$(grep -E '^DOMINIO=' .env | head -1 | cut -d= -f2- | tr -d "\"' ")
 docker run --rm -e DOMINIO="$DOM" -v "$CADDYFILE:/etc/caddy/Caddyfile:ro" caddy:2 caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile >/dev/null || desfazer
 
 echo "==> Subindo o contador e recarregando o Caddy (o app do painel achadinhos não é tocado)"
+docker rm -f achadinhos-visitas-1 >/dev/null 2>&1 || true
 $DC up -d --no-deps visitas caddy || desfazer
-sleep 6
+sleep 3
+echo "==> Recarregando a configuração do Caddy (sem derrubar nada)"
+if ! $DC exec -T caddy caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile; then
+  echo "   reload falhou, reiniciando o Caddy"; $DC restart caddy
+fi
+sleep 4
 
 echo "==> Conferindo"
 P=$(curl -sk -o /dev/null -w '%{http_code}' --max-time 15 --resolve "$DOM:443:127.0.0.1" "https://$DOM/" || echo 000)
