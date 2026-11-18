@@ -42,6 +42,8 @@
   hit('view');
   setInterval(function(){ if(document.visibilityState==='visible') hit('ping'); },20000);
   document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') hit('ping'); });
+  document.addEventListener('click',function(e){ var g=e.target.closest&&e.target.closest('a[data-grupo]'); if(!g) return;
+    hit('click','Grupo WhatsApp'); CSA.track('Lead',{content_name:'Grupo Oferta do Rafa',origem:g.getAttribute('data-grupo'),pagina:location.pathname}); });
   document.addEventListener('click',function(e){ var a=e.target.closest&&e.target.closest('a[data-ml]'); if(!a) return; var p=CSA.byId[a.getAttribute('data-ml')]; hit('click',p?p.nome:a.getAttribute('data-ml')); });
 
   // Barra fixa do celular: aparece depois que o primeiro CTA sai da tela

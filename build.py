@@ -15,6 +15,23 @@ CATS = [("estacao", "Estações de energia", "Silenciosas, sem gasolina, funcion
         ("gerador", "Geradores a gasolina", "Mais potência por real, mas só do lado de fora de casa, com barulho e combustível."),
         ("protecao", "Proteção e itens de entrada", "Baratos e resolvem o susto: internet sem piscar, aparelho sem queimar, casa sem escuro.")]
 CATNOME = {c: n for c, n, _ in CATS}
+CFG = json.load(open(os.path.join(ROOT, "config.json"), encoding="utf-8")) if os.path.exists(os.path.join(ROOT, "config.json")) else {}
+GRUPO = CFG.get("grupo_whatsapp", "").strip()
+
+
+def grupo_bloco(origem):
+    """Convite pro grupo Oferta do Rafa no WhatsApp (só aparece se config.json tiver o link)."""
+    if not GRUPO: return ""
+    return f"""<section class="sec"><div class="wrap" style="max-width:760px">
+  <div class="grupo">
+    <div class="grupo-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.8-1.2.2-.6.2-1.1.1-1.2l-.1-.1Z"/></svg></div>
+    <div class="grupo-tx">
+      <h3>Não é hora de comprar?</h3>
+      <p>Entra no grupo <b>Oferta do Rafa</b> no WhatsApp: cupons e quedas de preço do Mercado Livre todo dia. Quando essas estações entrarem em promoção (a Black Friday vem aí), você fica sabendo primeiro.</p>
+    </div>
+    <a class="btn grupo-btn" href="{e(GRUPO)}" target="_blank" rel="noopener" data-grupo="{origem}">Entrar no grupo grátis</a>
+  </div>
+</div></section>"""
 
 e = lambda s: html.escape(str(s), quote=True)
 def brl(n): return f"{int(round(n)):,}".replace(",", ".")
@@ -64,7 +81,7 @@ def head(title, desc, path, og_img, extra=""):
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://http2.mlstatic.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/style.css?v=2">
+<link rel="stylesheet" href="/assets/style.css?v=3">
 <script>
 !function(f,b,e,v,n,t,s){{if(f.fbq)return;n=f.fbq=function(){{n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)}};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
 fbq('init','{PIXEL}');fbq('track','PageView');
@@ -94,7 +111,7 @@ def footer():
 
 
 def scripts(extra=""):
-    return f'<script src="/produtos.js?v=2"></script>\n<script src="/assets/app.js?v=3"></script>\n{extra}</body>\n</html>\n'
+    return f'<script src="/produtos.js?v=2"></script>\n<script src="/assets/app.js?v=4"></script>\n{extra}</body>\n</html>\n'
 
 
 def card(p, origem="vitrine"):
@@ -159,6 +176,7 @@ index = head("Casa Sem Apagão — energia de reserva para sua casa",
   {secoes}
   <p class="disc">Preços e estoque mudam todo dia; o valor final é o do Mercado Livre.</p>
 </main>
+{grupo_bloco("home")}
 <section class="sec"><div class="wrap">
   <div class="sec-title"><h2>Estação, gerador ou nobreak?</h2></div>
   <div class="tbl">{tbl}</div><div class="cmp-cards">{cmp}</div>
@@ -253,6 +271,7 @@ for p in P:
   </div>
 </main>
 {extra_bloco}
+{grupo_bloco("produto")}
 <section class="sec"><div class="wrap">
   <h2 class="cat-title" style="margin-top:0">Compare com outras opções</h2><p class="cat-sub">Veja também:</p>
   <div class="grid">{rel_html}</div>
