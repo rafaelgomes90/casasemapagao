@@ -12,7 +12,7 @@ h1{font-size:18px;margin:0 0 14px;display:flex;align-items:center;gap:10px}h1 sm
 .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:14px}.box h2{font-size:14px;margin:0 0 8px;color:var(--dim);font-weight:600}
 table{width:100%;border-collapse:collapse;font-size:14px}td{padding:6px 4px;border-top:1px solid var(--line);vertical-align:top}tr:first-child td{border-top:0}
 .t{color:var(--dim);white-space:nowrap;font-variant-numeric:tabular-nums}.tag{font-size:12px;padding:1px 7px;border-radius:99px;border:1px solid var(--line);color:var(--dim);white-space:nowrap}
-.tag.click{border-color:var(--amb);color:var(--amb)}.ad{color:var(--dim);font-size:12px}.vazio{color:var(--dim)}
+.tag.click{border-color:var(--amb);color:var(--amb)}.tag.cupom{border-color:#f472b6;color:#f472b6}.tag.abriucupom{border-color:#a78bfa;color:#a78bfa}.tag.grupo{border-color:#4ade80;color:#4ade80}.sub{color:var(--dim);font-size:13px;margin:-6px 0 14px}.ad{color:var(--dim);font-size:12px}.vazio{color:var(--dim)}
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:640px){.cols{grid-template-columns:1fr}}
 .erro{background:#3a1515;border:1px solid #6b2424;padding:12px;border-radius:10px}
 </style></head><body>
@@ -24,6 +24,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}td{padding:6px 4px;bord
  <div class="k cl"><b id="k-cli">–</b><span>cliques pro ML hoje</span></div>
  <div class="k"><b id="k-tx">–</b><span>visitantes que clicaram</span></div>
 </div>
+<p class="sub" id="k-sub"></p>
 <div class="box"><h2>Online agora</h2><table id="online"></table></div>
 <div class="box"><h2>Últimos acessos e cliques</h2><table id="ultimos"></table></div>
 <div class="cols">
@@ -37,6 +38,7 @@ function e(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'
 function hora(ts){return new Date(ts*1000).toLocaleTimeString('pt-BR',{timeZone:'America/Fortaleza',hour:'2-digit',minute:'2-digit',second:'2-digit'})}
 function lugar(r){return r.cidade?e(r.cidade)+(r.uf?' – '+e(r.uf):''):'<span class="vazio">local desconhecido</span>'}
 function pag(p){return p==='/'||!p?'início':e(p.replace(/\//g,' ').trim())}
+function rot(r){if(r.tipo!='click')return 'visitou';return {cupom:'clicou no cupom',abriucupom:'abriu o cupom',grupo:'entrou no grupo'}[r.via]||'clicou no ML'}
 function rows(id,list,fn,vazio){document.getElementById(id).innerHTML=list.length?list.map(fn).join(''):'<tr><td class="vazio">'+vazio+'</td></tr>'}
 function load(){
  fetch('/api/painel?k='+encodeURIComponent(K),{cache:'no-store'}).then(function(r){if(r.status==403)throw 'Chave inválida: abra o link completo que te passei.';return r.json()}).then(function(d){
@@ -47,9 +49,10 @@ function load(){
   document.getElementById('k-on').textContent=d.online.length;
   document.getElementById('k-vis').textContent=h.visitantes;
   document.getElementById('k-cli').textContent=h.cliques;
+  document.getElementById('k-sub').textContent='Dos cliques pro ML, '+(h.pelo_cupom||0)+' vieram pelo cupom · '+(h.abriu_cupom||0)+' abriram o cupom · '+(h.grupo||0)+' foram pro grupo do WhatsApp';
   document.getElementById('k-tx').textContent=h.visitantes?h.quem_clicou+' ('+Math.round(100*h.quem_clicou/h.visitantes)+'%)':'0';
   rows('online',d.online,function(r){return '<tr><td>'+lugar(r)+'</td><td>'+e(r.aparelho)+'</td><td>'+pag(r.pagina)+(r.anuncio?'<div class="ad">via '+e(r.anuncio)+'</div>':'')+'</td></tr>'},'ninguém no site agora');
-  rows('ultimos',d.ultimos,function(r){return '<tr><td class="t">'+hora(r.ts)+'</td><td><span class="tag '+r.tipo+'">'+(r.tipo=='click'?'clicou no ML':'visitou')+'</span></td><td>'+lugar(r)+' · '+e(r.aparelho)+'<div class="ad">'+(r.tipo=='click'?e(r.produto):pag(r.pagina))+(r.anuncio?' · via '+e(r.anuncio):'')+'</div></td></tr>'},'ainda sem acessos');
+  rows('ultimos',d.ultimos,function(r){return '<tr><td class="t">'+hora(r.ts)+'</td><td><span class="tag '+r.tipo+'">'+(r.tipo=='click'?'clicou no ML':'visitou')+'</span></td><td>'+lugar(r)+' · '+e(r.aparelho)+'<div class="ad">'+(r.tipo=='click'&&r.via!='grupo'?e(r.produto):pag(r.pagina))+(r.anuncio?' · via '+e(r.anuncio):'')+'</div></td></tr>'},'ainda sem acessos');
   rows('cidades',d.cidades,function(r){return '<tr><td>'+lugar(r)+'</td><td class="t">'+r.n+'</td></tr>'},'—');
   rows('produtos',d.produtos,function(r){return '<tr><td>'+e(r.produto)+'</td><td class="t">'+r.n+'</td></tr>'},'nenhum clique ainda');
   rows('anuncios',d.anuncios,function(r){return '<tr><td>'+e(r.anuncio)+'</td><td class="t">'+r.visitantes+' · '+(r.cliques||0)+'</td></tr>'},'nenhum visitante vindo de anúncio ainda');

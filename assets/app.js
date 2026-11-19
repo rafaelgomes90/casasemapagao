@@ -31,6 +31,7 @@
     var b = e.target.closest && e.target.closest('a[data-cupom]'); if(!b) return;
     e.preventDefault();
     var id=b.getAttribute('data-cupom'), cod=b.getAttribute('data-codigo'), p=CSA.byId[id]||{};
+    hit('click',p.nome||id,'abriucupom');
     CSA.trackC('AbriuCupom',{produto:p.nome||id,produto_id:id,cupom:cod,pagina:location.pathname});
     var old=document.getElementById('cupom-modal'); if(old) old.remove();
     var m=document.createElement('div'); m.id='cupom-modal'; m.className='cm-bg'; m.setAttribute('role','dialog'); m.setAttribute('aria-modal','true');
@@ -60,7 +61,7 @@
   var EU=false; try{ EU=localStorage.getItem('csa_eu')==='1'; }catch(e){}
   function hit(t,prod){ if(EU) return; try{
     var u={}; try{ u=JSON.parse(sessionStorage.getItem(KEY)||'{}'); }catch(e){}
-    var body=JSON.stringify({t:t,sid:sid,p:location.pathname,prod:prod||'',src:u.utm_source||(document.referrer?new URL(document.referrer).hostname:''),ad:u.utm_content||''});
+    var body=JSON.stringify({t:t,via:arguments[2]||'',sid:sid,p:location.pathname,prod:prod||'',src:u.utm_source||(document.referrer?new URL(document.referrer).hostname:''),ad:u.utm_content||''});
     if(navigator.sendBeacon) navigator.sendBeacon(HIT,new Blob([body],{type:'application/json'}));
     else fetch(HIT,{method:'POST',body:body,headers:{'Content-Type':'application/json'},keepalive:true});
   }catch(e){} }
@@ -68,8 +69,8 @@
   setInterval(function(){ if(document.visibilityState==='visible') hit('ping'); },20000);
   document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') hit('ping'); });
   document.addEventListener('click',function(e){ var g=e.target.closest&&e.target.closest('a[data-grupo]'); if(!g) return;
-    hit('click','Grupo WhatsApp'); CSA.track('Lead',{content_name:'Grupo Oferta do Rafa',origem:g.getAttribute('data-grupo'),pagina:location.pathname}); });
-  document.addEventListener('click',function(e){ var a=e.target.closest&&e.target.closest('a[data-ml]'); if(!a) return; var p=CSA.byId[a.getAttribute('data-ml')]; hit('click',p?p.nome:a.getAttribute('data-ml')); });
+    hit('click','Grupo WhatsApp','grupo'); CSA.track('Lead',{content_name:'Grupo Oferta do Rafa',origem:g.getAttribute('data-grupo'),pagina:location.pathname}); });
+  document.addEventListener('click',function(e){ var a=e.target.closest&&e.target.closest('a[data-ml]'); if(!a) return; var p=CSA.byId[a.getAttribute('data-ml')]; hit('click',p?p.nome:a.getAttribute('data-ml'),a.getAttribute('data-origem')==='cupom'?'cupom':'ml'); });
 
   // Barra fixa do celular: aparece depois que o primeiro CTA sai da tela
   var flut=document.getElementById('flut'), alvo=document.querySelector('[data-flut-alvo]');

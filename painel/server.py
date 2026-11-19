@@ -16,6 +16,8 @@ con.execute('''CREATE TABLE IF NOT EXISTS ev(
   ts REAL, sid TEXT, tipo TEXT, pagina TEXT, produto TEXT, cidade TEXT, uf TEXT,
   aparelho TEXT, origem TEXT, anuncio TEXT)''')
 con.execute('CREATE INDEX IF NOT EXISTS ev_ts ON ev(ts)')
+if 'via' not in [r[1] for r in con.execute('PRAGMA table_info(ev)')]:
+    con.execute("ALTER TABLE ev ADD COLUMN via TEXT DEFAULT ''")
 con.execute('CREATE TABLE IF NOT EXISTS sess(sid TEXT PRIMARY KEY, ultimo REAL, pagina TEXT, cidade TEXT, uf TEXT, aparelho TEXT, anuncio TEXT)')
 con.execute('CREATE TABLE IF NOT EXISTS ign(h TEXT PRIMARY KEY, ts REAL)')
 con.commit()
@@ -107,11 +109,12 @@ class H(BaseHTTPRequestHandler):
         ap = aparelho(self.headers.get('User-Agent'))
         pag, prod = clip(d.get('p')), clip(d.get('prod'), 60)
         origem, anuncio = clip(d.get('src'), 40), clip(d.get('ad'), 80)
+        via = clip(d.get('via'), 12)
         with lock:
             con.execute('INSERT INTO sess VALUES(?,?,?,?,?,?,?) ON CONFLICT(sid) DO UPDATE SET ultimo=excluded.ultimo, pagina=excluded.pagina',
                         (sid, now, pag, cid, uf, ap, anuncio))
             if tipo != 'ping':
-                con.execute('INSERT INTO ev VALUES(?,?,?,?,?,?,?,?,?,?)', (now, sid, tipo, pag, prod, cid, uf, ap, origem, anuncio))
+                con.execute('INSERT INTO ev(ts,sid,tipo,pagina,produto,cidade,uf,aparelho,origem,anuncio,via) VALUES(?,?,?,?,?,?,?,?,?,?,?)', (now, sid, tipo, pag, prod, cid, uf, ap, origem, anuncio, via))
             con.commit()
         self.send_response(204)
         self.end_headers()
@@ -133,19 +136,23 @@ class H(BaseHTTPRequestHandler):
             q = lambda sql, *a: con.execute(sql, a).fetchone()[0]
             visitantes = q("SELECT COUNT(DISTINCT sid) FROM ev WHERE ts>? AND tipo='view'", hoje)
             views = q("SELECT COUNT(*) FROM ev WHERE ts>? AND tipo='view'", hoje)
-            cliques = q("SELECT COUNT(*) FROM ev WHERE ts>? AND tipo='click'", hoje)
-            quem_clicou = q("SELECT COUNT(DISTINCT sid) FROM ev WHERE ts>? AND tipo='click'", hoje)
-            ultimos = con.execute('SELECT ts, tipo, pagina, produto, cidade, uf, aparelho, anuncio FROM ev ORDER BY ts DESC LIMIT 60').fetchall()
+            ML = "tipo='click' AND COALESCE(via,'') IN ('','ml','cupom')"
+            cliques = q(f"SELECT COUNT(*) FROM ev WHERE ts>? AND {ML}", hoje)
+            pelo_cupom = q("SELECT COUNT(*) FROM ev WHERE ts>? AND tipo='click' AND via='cupom'", hoje)
+            abriu_cupom = q("SELECT COUNT(DISTINCT sid) FROM ev WHERE ts>? AND tipo='click' AND via='abriucupom'", hoje)
+            grupo = q("SELECT COUNT(*) FROM ev WHERE ts>? AND tipo='click' AND via='grupo'", hoje)
+            quem_clicou = q(f"SELECT COUNT(DISTINCT sid) FROM ev WHERE ts>? AND {ML}", hoje)
+            ultimos = con.execute('SELECT ts, tipo, pagina, produto, cidade, uf, aparelho, anuncio, via FROM ev ORDER BY ts DESC LIMIT 60').fetchall()
             cidades = con.execute("SELECT cidade, uf, COUNT(DISTINCT sid) n FROM ev WHERE ts>? AND cidade!='' GROUP BY cidade, uf ORDER BY n DESC LIMIT 10", (hoje,)).fetchall()
-            produtos = con.execute("SELECT produto, COUNT(*) n FROM ev WHERE ts>? AND tipo='click' GROUP BY produto ORDER BY n DESC", (hoje,)).fetchall()
-            anuncios = con.execute("SELECT anuncio, COUNT(DISTINCT sid) v, SUM(tipo='click') c FROM ev WHERE ts>? AND anuncio!='' GROUP BY anuncio ORDER BY v DESC LIMIT 12", (hoje,)).fetchall()
+            produtos = con.execute("SELECT produto, COUNT(*) n FROM ev WHERE ts>? AND tipo='click' AND COALESCE(via,'') IN ('','ml','cupom') GROUP BY produto ORDER BY n DESC", (hoje,)).fetchall()
+            anuncios = con.execute("SELECT anuncio, COUNT(DISTINCT sid) v, SUM(tipo='click' AND COALESCE(via,'') IN ('','ml','cupom')) c FROM ev WHERE ts>? AND anuncio!='' GROUP BY anuncio ORDER BY v DESC LIMIT 12", (hoje,)).fetchall()
             con.execute('DELETE FROM sess WHERE ultimo<?', (now - 86400 * 3,))
             con.commit()
         self._json(200, {
             'agora': now,
             'online': [dict(zip(['sid', 'pagina', 'cidade', 'uf', 'aparelho', 'anuncio', 'ultimo'], r)) for r in online],
-            'hoje': {'visitantes': visitantes, 'paginas': views, 'cliques': cliques, 'quem_clicou': quem_clicou},
-            'ultimos': [dict(zip(['ts', 'tipo', 'pagina', 'produto', 'cidade', 'uf', 'aparelho', 'anuncio'], r)) for r in ultimos],
+            'hoje': {'visitantes': visitantes, 'paginas': views, 'cliques': cliques, 'quem_clicou': quem_clicou, 'pelo_cupom': pelo_cupom, 'abriu_cupom': abriu_cupom, 'grupo': grupo},
+            'ultimos': [dict(zip(['ts', 'tipo', 'pagina', 'produto', 'cidade', 'uf', 'aparelho', 'anuncio', 'via'], r)) for r in ultimos],
             'cidades': [dict(zip(['cidade', 'uf', 'n'], r)) for r in cidades],
             'produtos': [dict(zip(['produto', 'n'], r)) for r in produtos],
             'anuncios': [dict(zip(['anuncio', 'visitantes', 'cliques'], r)) for r in anuncios],
