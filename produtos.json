@@ -28,7 +28,7 @@
   "picoW": 2700,
   "voltagem": "127V",
   "selo": "Mais vendido",
-  "precoAprox": 5945,
+  "precoAprox": 6149,
   "etiqueta": "csabluettiac180p",
   "resumo": "A que mais entrega bateria pelo preço: 1,44 kWh, recarga de 80% em 45 minutos na tomada e entrada para placa solar.",
   "pontos": [
@@ -67,7 +67,7 @@
   "potenciaW": 1800,
   "picoW": 2700,
   "voltagem": "127V",
-  "precoAprox": 5999,
+  "precoAprox": 5799,
   "etiqueta": "csabluettielite100",
   "resumo": "1 kWh com modo nobreak, recarga turbo e controle pelo celular. Boa escolha pra home office e geladeira.",
   "pontos": [
@@ -86,7 +86,7 @@
   "potenciaW": 1000,
   "picoW": 2000,
   "voltagem": "220V",
-  "precoAprox": 4748,
+  "precoAprox": 4999,
   "etiqueta": "csabluettiac70p",
   "resumo": "Compacta, com função UPS e 5 anos de garantia do fabricante. Pra quem quer manter o básico ligado sem gastar com uma de 1,5 kWh.",
   "pontos": [
@@ -146,7 +146,7 @@
   "picoW": 600,
   "voltagem": "127V",
   "selo": "Entrada",
-  "precoAprox": 2148,
+  "precoAprox": 2020,
   "etiqueta": "csaecoflowriver3",
   "resumo": "A porta de entrada: pequena, cabe numa gaveta e mantém Wi‑Fi, roteador e celulares funcionando por horas.",
   "pontos": [
@@ -204,7 +204,7 @@
   "potenciaW": 300,
   "picoW": 300,
   "voltagem": "Bivolt",
-  "precoAprox": 424,
+  "precoAprox": 403,
   "etiqueta": "csanobreakintelbras",
   "resumo": "Pra internet não cair quando a luz pisca: segura modem e roteador por alguns minutos e protege contra surtos.",
   "pontos": [
@@ -223,7 +223,7 @@
   "potenciaW": 0,
   "picoW": 0,
   "voltagem": "Bivolt",
-  "precoAprox": 87,
+  "precoAprox": 83,
   "etiqueta": "csakitdps",
   "resumo": "O pico na volta da energia é o que mais queima geladeira e TV. Esses protetores vão direto na tomada.",
   "pontos": [
@@ -242,7 +242,7 @@
   "potenciaW": 0,
   "picoW": 0,
   "voltagem": "Bivolt",
-  "precoAprox": 68,
+  "precoAprox": 71,
   "etiqueta": "csaluzemergencia",
   "resumo": "Acende sozinha quando a luz cai e ilumina um cômodo inteiro. Barata e resolve o susto do escuro.",
   "pontos": [
@@ -259,17 +259,17 @@
   "categoria": "estacao",
   "capacidadeWh": 504,
   "potenciaW": 700,
-  "voltagem": "127V",
+  "voltagem": "127V ou 220V",
   "selo": "Custo-benefício",
-  "precoAprox": 2465,
+  "precoAprox": 3074,
   "resumo": "Meio termo entre as pequenas e as grandes: 504 Wh com bateria LiFePO4, segura Wi‑Fi, TV e notebook por horas e liga ventilador e geladeira pequena.",
   "pontos": [
    "Bateria LiFePO4 de longa vida",
-   "Liga sozinha quando a luz cai",
+   "Escolha 127V ou 220V no anúncio",
    "Carrega na tomada, no carro ou no painel solar"
   ],
-  "imagem": "https://http2.mlstatic.com/D_Q_NP_2X_647642-MLA99925307387_112025-E.webp",
-  "link": "https://meli.la/1hjdeSg",
+  "imagem": "https://http2.mlstatic.com/D_Q_NP_2X_672655-MLB90116087905_082025-E-estaco-de-energia-bluetti-ac50p-portatil-504wh-700w-potente.webp",
+  "link": "https://meli.la/2npniA3",
   "etiqueta": "ofertadorafa"
  },
  {
@@ -296,7 +296,7 @@
   "categoria": "portatil",
   "spec": "60.000 mAh · 100 W",
   "voltagem": "USB / USB‑C",
-  "precoAprox": 315,
+  "precoAprox": 318,
   "resumo": "A opção mais em conta de 60 mil mAh com 100 W: celulares e notebook carregados mesmo com a casa sem luz.",
   "pontos": [
    "100 W de saída USB‑C",
@@ -365,7 +365,7 @@
   "spec": "36 Wh · 18 W",
   "voltagem": "Bivolt",
   "selo": "Internet sem cair",
-  "precoAprox": 198,
+  "precoAprox": 199,
   "resumo": "Fica entre a tomada e o roteador: quando a luz cai, a internet continua por horas. Ideal pra quem trabalha em casa.",
   "pontos": [
    "Internet continua na queda",

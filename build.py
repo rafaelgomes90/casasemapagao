@@ -121,7 +121,7 @@ def footer():
 
 
 def scripts(extra=""):
-    return f'<script src="/produtos.js?v=3"></script>\n<script src="/assets/app.js?v=6"></script>\n{extra}</body>\n</html>\n'
+    return f'<script src="/produtos.js?v=4"></script>\n<script src="/assets/app.js?v=6"></script>\n{extra}</body>\n</html>\n'
 
 
 def card(p, origem="vitrine"):
