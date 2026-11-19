@@ -1,0 +1,23 @@
+# Quando produtos.json / config.json / build.py / assets mudarem (ex.: pela tarefa diária de preços),
+# roda o build.py e publica as páginas geradas. A VPS puxa do GitHub a cada minuto.
+name: build
+on:
+  push:
+    branches: [main]
+    paths: [produtos.json, config.json, build.py, "assets/**"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: python3 build.py
+      - run: |
+          git config user.name "casasemapagao-build"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || (git commit -m "build automático das páginas" && git push)
