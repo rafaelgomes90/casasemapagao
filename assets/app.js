@@ -24,6 +24,30 @@
     CSA.trackC('CliqueML',{produto:p.nome,produto_id:p.id,categoria:p.categoria,etiqueta:p.etiqueta,origem:a.getAttribute('data-origem')||'',pagina:location.pathname});
   });
 
+  // Botão "Resgatar cupom": abre o popup com o código; "Usar cupom" copia e leva pro produto no ML
+  function copiar(t){ try{ if(navigator.clipboard&&window.isSecureContext){ navigator.clipboard.writeText(t); return true; } }catch(e){}
+    try{ var x=document.createElement('textarea'); x.value=t; x.style.position='fixed'; x.style.opacity='0'; document.body.appendChild(x); x.select(); document.execCommand('copy'); x.remove(); return true; }catch(e){ return false; } }
+  document.addEventListener('click', function(e){
+    var b = e.target.closest && e.target.closest('a[data-cupom]'); if(!b) return;
+    e.preventDefault();
+    var id=b.getAttribute('data-cupom'), cod=b.getAttribute('data-codigo'), p=CSA.byId[id]||{};
+    CSA.trackC('AbriuCupom',{produto:p.nome||id,produto_id:id,cupom:cod,pagina:location.pathname});
+    var old=document.getElementById('cupom-modal'); if(old) old.remove();
+    var m=document.createElement('div'); m.id='cupom-modal'; m.className='cm-bg'; m.setAttribute('role','dialog'); m.setAttribute('aria-modal','true');
+    m.innerHTML='<div class="cm"><button class="cm-x" aria-label="Fechar">×</button>'+
+      '<p class="cm-tag">CUPOM DE DESCONTO</p><h3>Use no Mercado Livre</h3>'+
+      '<div class="cm-cod"><code>'+CSA.esc(cod)+'</code><button class="cm-copy">Copiar</button></div>'+
+      '<p class="cm-tx">Copie o código e cole no campo <b>cupom</b> na hora de pagar no Mercado Livre. O desconto vale conforme as regras e o estoque do cupom no ML.</p>'+
+      '<a class="ml cm-usar" href="'+CSA.esc(b.getAttribute('href'))+'" target="_blank" rel="noopener sponsored" data-ml="'+CSA.esc(id)+'" data-origem="cupom">Usar cupom e comprar</a></div>';
+    document.body.appendChild(m);
+    var fechar=function(){ m.remove(); };
+    m.addEventListener('click',function(ev){ if(ev.target===m||ev.target.closest('.cm-x')) fechar(); });
+    document.addEventListener('keydown',function k(ev){ if(ev.key==='Escape'){ fechar(); document.removeEventListener('keydown',k); } });
+    var cp=m.querySelector('.cm-copy');
+    cp.addEventListener('click',function(){ if(copiar(cod)){ cp.textContent='Copiado ✓'; cp.classList.add('ok'); } });
+    m.querySelector('.cm-usar').addEventListener('click',function(){ copiar(cod); setTimeout(fechar,300); });
+  });
+
   // Página de produto: ViewContent do produto
   var pid = document.body.getAttribute('data-produto');
   if(pid && CSA.byId[pid]){ var p=CSA.byId[pid];

@@ -18,6 +18,14 @@ CATS = [("estacao", "Estações de energia", "Silenciosas, sem gasolina, funcion
 CATNOME = {c: n for c, n, _ in CATS}
 CFG = json.load(open(os.path.join(ROOT, "config.json"), encoding="utf-8")) if os.path.exists(os.path.join(ROOT, "config.json")) else {}
 GRUPO = CFG.get("grupo_whatsapp", "").strip()
+CUPOM = CFG.get("cupom", "").strip()
+ICON_TICKET = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 17v2M13 11v2"/></svg>'
+
+
+def cupom_btn(p):
+    if not CUPOM: return ""
+    return (f'<a class="btn-cupom" href="{e(p["link"])}" target="_blank" rel="noopener sponsored" '
+            f'data-cupom="{p["id"]}" data-codigo="{e(CUPOM)}">{ICON_TICKET} Resgatar cupom de desconto</a>')
 
 
 def grupo_bloco(origem):
@@ -83,7 +91,7 @@ def head(title, desc, path, og_img, extra=""):
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://http2.mlstatic.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/style.css?v=3">
+<link rel="stylesheet" href="/assets/style.css?v=4">
 <script>
 !function(f,b,e,v,n,t,s){{if(f.fbq)return;n=f.fbq=function(){{n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)}};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
 fbq('init','{PIXEL}');fbq('track','PageView');
@@ -113,7 +121,7 @@ def footer():
 
 
 def scripts(extra=""):
-    return f'<script src="/produtos.js?v=3"></script>\n<script src="/assets/app.js?v=5"></script>\n{extra}</body>\n</html>\n'
+    return f'<script src="/produtos.js?v=3"></script>\n<script src="/assets/app.js?v=6"></script>\n{extra}</body>\n</html>\n'
 
 
 def card(p, origem="vitrine"):
@@ -268,6 +276,7 @@ for p in P:
         <div class="valor">R$ {brl(p['precoAprox'])}</div>
         <small>preço de referência — o valor de hoje (e cupons) aparece no Mercado Livre</small>
         {ml(p, 'Comprar agora no Mercado Livre ' + ICON_EXT, "ml", "produto-botao")}
+        {cupom_btn(p)}
         <ul class="garantias"><li>{ICON_SHIELD}Compra Garantida: você recebe o produto ou o dinheiro de volta</li><li>{ICON_CARD}Parcelamento e frete calculados no Mercado Livre</li></ul>
       </div>
     </div>
